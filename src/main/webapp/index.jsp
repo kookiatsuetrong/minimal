@@ -1,8 +1,11 @@
+<%@page pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta name="viewport" 
-			content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
+		<meta name="viewport" content="width=device-width,
+					initial-scale=1,
+					maximum-scale=1,
+					viewport-fit=cover" />
 		<link rel="stylesheet" href="/bootstrap.css" />
 		<title>minimal</title>
 	</head>
@@ -17,8 +20,7 @@
 					class="form-control monospace command-bar-element"
 					spellcheck="false" 
 					autocapitalize="off" />
-				<a type="button" 
-						class="btn btn-outline-secondary 
+				<a class="btn btn-outline-secondary 
 								dropdown-toggle dropdown-toggle-split
 								command-bar-element" 
 						data-bs-toggle="dropdown">
@@ -90,6 +92,12 @@
 				--editor: white;
 				--editor-text: #333;
 				--editor-line: #bbb;
+			}
+			
+			@media(max-width:576px) {
+				html {
+					font-size: 10px;
+				}
 			}
 			
 			body {
@@ -325,7 +333,6 @@
 			var result   = document.querySelector('#command-result')
 			var element  = document.querySelector
 								('#command-result .monospace')
-			console.log(plain)
 			plain = plain.replaceAll(' ', '&nbsp;')
 			plain = plain.replace(/\n/g, '<br/>')
 			element.innerHTML = '<code>' + plain + '</code>'

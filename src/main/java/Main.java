@@ -3,17 +3,22 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.FileWriter;
 import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 public class Main extends HttpServlet {
 	
 	Map<String,String> mime = new HashMap<>();
+	List<String> ignore = new ArrayList<>();
 	
 	@Override public void 
 	init() {
@@ -35,7 +40,8 @@ public class Main extends HttpServlet {
 			path = new File(path).getAbsolutePath();
 		} catch (Exception e) { }
 		*/
-		
+		ignore.add("node_modules");
+		ignore.add("target");
 		try {
 			File m = new File(real + "/WEB-INF/mime.sml");
 			Scanner in = new Scanner(m);
@@ -55,6 +61,8 @@ public class Main extends HttpServlet {
 	service(HttpServletRequest request, 
 			HttpServletResponse response) {
 		try {
+			request.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding("UTF-8");
 			Context context = new Context(request, response);
 			String uri = request.getRequestURI();
 			switch (uri) {
@@ -72,8 +80,7 @@ public class Main extends HttpServlet {
 	
 	void 
 	execute(Context context) {
-		context.response.setHeader("Content-Type", 
-					"text/plain; charset=utf-8;");
+		context.response.setContentType("text/plain");
 		String command = context.request.getParameter("command");
 		String result = execute(command);
 		context.print(result);
@@ -113,18 +120,12 @@ public class Main extends HttpServlet {
 	
 	void
 	readFile(Context context) {
+		context.response.setContentType("text/plain");
 		String name = context.request.getParameter("name");
 		try {
-			FileReader reader = new FileReader(name);
-			StringBuilder builder = new StringBuilder();
-			while (true) {
-				int k = reader.read();
-				if (k < 0) {
-					break;
-				}
-				builder.append((char)k);
-			}
-			context.print(builder.toString());
+			String s = Files.readString(Path.of(name), 
+								StandardCharsets.UTF_8);
+			context.print(s);
 		} catch (Exception e) { 
 			context.print(e);
 		}
@@ -132,15 +133,15 @@ public class Main extends HttpServlet {
 	
 	void
 	writeFile(Context context) {
-		context.response.setHeader("Content-Type", 
-					"text/plain; charset=utf-8;");
+		context.response.setContentType("text/plain");
 		String name = context.request.getParameter("name");
 		String text = context.request.getParameter("text");
 		if (name == null) {
 			context.println("Incorrect File Name");
 		} else {
 			try {
-				FileWriter writer = new FileWriter(name);
+				FileWriter writer = new FileWriter(name,
+											StandardCharsets.UTF_8);
 				writer.write(text);
 				writer.close();
 				context.println("Success");
@@ -152,8 +153,7 @@ public class Main extends HttpServlet {
 	
 	void 
 	listFolder(Context context) {
-		context.response.setHeader("Content-Type", 
-				"text/plain; charset=utf-8;");
+		context.response.setContentType("text/plain");
 		String result = listFolder(".");
 		context.print(result);
 	}
@@ -165,9 +165,16 @@ public class Main extends HttpServlet {
 		if (file.isDirectory()) {
 			String[] all = file.list();
 			for (String s : all) {
+				boolean found = false;
+				for (String t : ignore) {
+					if (s.equals(t)) {
+						found = true;
+					}
+				}
 				if (s.startsWith(".")) {
-					
-				} else {
+					found = true;
+				}
+				if (!found) {
 					result += listFolder(current + "/" + s);
 				}
 			}
@@ -177,8 +184,7 @@ public class Main extends HttpServlet {
 	
 	void
 	showIndex(Context context) {
-		context.response.setHeader("Content-Type", 
-					"text/plain; charset=utf-8;");
+		context.response.setContentType("text/plain");
 		context.print("The First Page");
 	}
 	
@@ -199,8 +205,7 @@ public class Main extends HttpServlet {
 				if (type == null) {
 					type = "text/plain";
 				}
-				type += "; charset=utf-8;";
-				context.response.setHeader("Content-Type", type);
+				context.response.setContentType(type);
 				Scanner in = new Scanner(file);
 				StringBuilder builder = new StringBuilder();
 				while (in.hasNextLine()) {
@@ -216,13 +221,13 @@ public class Main extends HttpServlet {
 	
 	void
 	runC(Context context) {
-		context.response.setHeader("Content-Type", "text/plain;charset=utf-8;");
+		context.response.setContentType("text/plain");
 		context.print("Running C");
 	}
 	
 	void 
 	runJava(Context context) {
-		context.response.setHeader("Content-Type", "text/plain;charset=utf-8;");
+		context.response.setContentType("text/plain");
 		context.print("Running Java");
 	}
 }
