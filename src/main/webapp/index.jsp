@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" 
+			content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
+		<link rel="stylesheet" href="/bootstrap.css" />
+		<title>minimal</title>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="input-group"
+				 id="command-bar">
+				<a class="btn btn-outline-secondary command-bar-element"
+					>minimal</a>
+				<input
+					id="command"
+					class="form-control monospace command-bar-element"
+					spellcheck="false" 
+					autocapitalize="off" />
+				<a type="button" 
+						class="btn btn-outline-secondary 
+								dropdown-toggle dropdown-toggle-split
+								command-bar-element" 
+						data-bs-toggle="dropdown">
+					<span class="visually-hidden">&gt;</span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a class="dropdown-item disabled"
+						   href=""
+						   >Dashboard</a></li>
+					<li><a class="dropdown-item"
+						   href="javascript:execute()"
+						   >Execute</a></li>
+					<li><a class="dropdown-item" 
+						   href="javascript:showFolder()"
+						   >Browse</a></li>
+					<li><a class="dropdown-item"
+						   href="javascript:saveFile()"
+						   >Save File</a></li>
+					<li><a class="dropdown-item"
+						   href="javascript:closeFile()"
+						   >Close File</a></li>
+					<li><a class="dropdown-item disabled"
+						   href=""
+						   >Scratch Pad</a></li>
+					<li><hr class="dropdown-divider" /></li>
+					<li><a class="dropdown-item"
+						   href="javascript:switchTheme()"
+						   >Switch Theme</a></li>
+					<li><a class="dropdown-item disabled"
+						   href=""
+						   >Download Folder</a></li>
+					<li><a class="dropdown-item disabled"
+						   href=""
+						   >Lock Screen</a></li>
+				</ul>
+			</div>
+		</div>
+		
+		<div id="command-result">
+			<div class="container-fluid">
+				<a href="javascript:clearResult()"
+				   class="btn btn-sm btn-danger"
+				   style="float:right; margin-top:.75rem; ">Clear</a>
+			</div>
+			<div class="container-fluid monospace">	
+			</div>
+		</div>
+		
+		<div id="folder-result">
+			<div class="container-fluid">
+				<a href="javascript:closeFolder()"
+				   class="btn btn-sm btn-danger"
+				   style="float:right; margin-top:.75rem; ">Close</a>
+			</div>
+			<div class="container-fluid" id="folder-target">	
+			</div>
+		</div>
+		
+		<div class="container-fluid">
+			<textarea
+				id="editor"
+				class="form-control editor-element monospace"
+				spellcheck="false"
+				rows="8"></textarea>
+		</div>
+		
+		<style>
+			:root {
+				--editor: white;
+				--editor-text: #333;
+				--editor-line: #bbb;
+			}
+			
+			body {
+				background: var(--editor);
+			}
+			
+			.container-fluid {
+			}
+			
+			#command-bar {
+				margin-top: 0.5rem;
+			}
+			
+			#command {
+				color: var(--editor-text);
+			}
+			
+			.command-bar-element {
+				max-height: 2.4rem;
+				border-color: var(--editor-line);
+			}
+			
+			.monospace {
+				font-family: monospace;
+				font-size: 1.15rem;
+				border-radius: .4rem;
+			}
+			
+			.btn {
+				border-radius: .4rem;
+			}
+			
+			textarea {
+				height: calc(100vh - 4.2rem);
+				-moz-tab-size: 4;
+				tab-size: 4;
+				margin-top: 0.5rem;
+				resize: none;
+			}
+			
+			.form-control {
+				background: var(--editor);
+				color: var(--editor-text);
+				border-color: var(--editor-line);
+			}
+			
+			.form-control:focus {
+				outline: 0 !important;
+				box-shadow: none;
+				background: var(--editor);
+				color: var(--editor-text);
+				border-color: var(--editor-line);
+			}
+			
+			#command-result {
+				margin-top: 0.75rem;
+				position: absolute;
+				z-index: -10;
+				width: calc( 100% - 2rem);
+				margin-left: 1rem;
+				opacity: 0.90;
+				min-height: 3.5rem;
+				background: #eee;
+				border-radius: .2rem;
+				height: calc(100vh - 4.72rem);
+				overflow-y: scroll;
+			}
+			
+			#command-result .monospace {
+				font-size: 1rem;
+			}
+			
+			#folder-result {
+				margin-top: 0.75rem;
+				position: absolute;
+				z-index: -10;
+				width: calc( 100% - 2rem);
+				margin-left: 1rem;
+				opacity: 0.95;
+				min-height: 3.5rem;
+				background: #eee;
+				height: calc(100vh - 4.72rem);
+				overflow-y: scroll;
+			}
+			
+			#folder-target {
+				font-family: monospace;
+			}
+			
+			#folder-target a {
+				text-decoration: none;
+				color: #888;
+			}
+			
+			#folder-target a:hover {
+				color: black;
+			}
+			
+			.dropdown-menu {
+				opacity: .85;
+			}
+			
+			body {
+				scrollbar-color:	rgba(128,128,128, .5)
+									rgba(128,128,128, 0);
+			}
+			
+			::-webkit-scrollbar {
+				width: .5rem;
+			}
+
+			::-webkit-scrollbar-track {
+				background: rgba(128,128,128, 0.0);
+			}
+
+			::-webkit-scrollbar-thumb {
+				background: rgba(128,128,128, 0.8);
+				border-radius: .25rem;
+			}
+		</style>
+		
+		<script src="/bootstrap.bundle.js"></script>
+		<script>
+		var currentEditorFile = ''
+			
+		document.getElementById("command").onkeydown = function(e) {
+			if (e.keyCode == 13) {
+				execute()
+			}
+		}
+
+		document.getElementById("editor").onkeydown = function(e) {
+			if (e.keyCode == 9 || e.which == 9) {
+				e.preventDefault()
+				var s = this.selectionStart
+				this.value = this.value.substring(0, this.selectionStart) + 
+								"\t" +
+								this.value.substring(this.selectionEnd)
+				this.selectionEnd = s + 1
+			}
+		}
+		
+		function switchTheme() {
+			var root = document.querySelector(':root')
+			var cs = getComputedStyle(root)
+			var current = cs.getPropertyValue('--editor')
+			current = current.trim()
+			if (current == 'white') {
+				root.style.setProperty('--editor',      'black')
+				root.style.setProperty('--editor-text', '#f0f0f0')
+				root.style.setProperty('--editor-line', '#888')
+			}
+			if (current == 'black') {
+				root.style.setProperty('--editor',      'white')
+				root.style.setProperty('--editor-text', '#333')
+				root.style.setProperty('--editor-line', '#bbb')
+			}
+		}
+		
+		async function showFolder() {
+			var response = await fetch('/list-folder')
+			var plain    = await response.text()
+			var data = [ ]
+			plain = plain.split('\n')
+			for (var i in plain) {
+				data.push(plain[i])
+			}
+			var parent = document.querySelector('#folder-result')
+			var target = document.querySelector('#folder-target')
+			target.innerText = ''
+			for (var i in data) {
+				var s = "<a href='javascript:openFile(" +
+							'"' + data[i] + '"' + ")'>"
+				s += data[i] + '</a><br/>'
+				target.innerHTML += s
+			}
+			parent.style.zIndex = 10
+			parent.style.display = 'block'
+		}
+		
+		function closeFolder() {
+			var parent = document.querySelector('#folder-result')
+			parent.style.zIndex = -10
+			parent.style.display = 'none'
+		}
+		
+		async function openFile(file) {
+			var response = await fetch('/read-file?name=' + file)
+			var plain    = await response.text()
+			document.getElementById('editor').value = plain
+			var tree = document.querySelector('#folder-result')
+			tree.style.zIndex = -10
+			tree.style.display = 'none'
+			
+			var command = document.querySelector('#command-result')
+			command.style.zIndex = -10
+			command.style.display = 'none'
+			
+			currentEditorFile = file
+		}
+		
+		async function saveFile() {
+			if (currentEditorFile == '') {
+				console.log('Empty File')
+				return
+			}
+			
+			var editor = document.querySelector('#editor')
+			var h = { 'Content-Type': 'application/x-www-form-urlencoded' }
+			var detail = {  method: 'POST',
+							headers: h,
+							body:  encodeURI('name=' + 
+										currentEditorFile + 
+										'&text=' + 
+										editor.value)
+							}
+			var response = await fetch('/write-file', detail)
+			var plain = await response.text()
+			console.log(plain)
+		}
+		
+		function closeFile() {
+			currentEditorFile = ''
+			var editor = document.querySelector('#editor')
+			editor.value = ''
+		}
+		
+		async function execute(command) {
+			var element = document.querySelector('#command')
+			command = decodeURI(element.value)
+			var response = await fetch('/execute?command=' + command)
+			var plain    = await response.text()
+			var result   = document.querySelector('#command-result')
+			var element  = document.querySelector
+								('#command-result .monospace')
+			console.log(plain)
+			plain = plain.replaceAll(' ', '&nbsp;')
+			plain = plain.replace(/\n/g, '<br/>')
+			element.innerHTML = '<code>' + plain + '</code>'
+			result.style.zIndex = 10
+			result.style.display = 'block'
+		}
+		
+		function clearResult() {
+			var result   = document.querySelector('#command-result')
+			var element  = document.querySelector
+								('#command-result .monospace')
+			element.innerText = ''
+			result.style.zIndex = -10
+			result.style.display = 'none'
+		}
+		
+		</script>
+	</body>
+</html>
