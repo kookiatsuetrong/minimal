@@ -42,9 +42,6 @@
 					<li><a class="dropdown-item"
 						   href="javascript:closeFile()"
 						   >Close File</a></li>
-					<li><a class="dropdown-item disabled"
-						   href=""
-						   >Scratch Pad</a></li>
 					<li><hr class="dropdown-divider" /></li>
 					<li><a class="dropdown-item"
 						   href="javascript:switchTheme()"
@@ -58,6 +55,7 @@
 					<li><a class="dropdown-item"
 						   href="javascript:runJavaScript()"
 						   >Run JavaScript</a></li>
+					<li><hr class="dropdown-divider" /></li>
 					<li><a class="dropdown-item disabled"
 						   href=""
 						   >Download Folder</a></li>
@@ -400,7 +398,6 @@ int main(void) {
 			result.style.display = 'block'
 		}
 		
-		
 		async function runC() {
 			var editor = document.querySelector('#editor')
 			var h = { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -418,6 +415,34 @@ int main(void) {
 			element.innerHTML = '<code>' + plain + '</code>'
 			result.style.zIndex = 10
 			result.style.display = 'block'
+		}
+		
+		function runJavaScript() {
+			var original = console.log
+			console.log = write
+			var editor = document.querySelector('#editor')
+			try {
+				eval(editor.value)
+			} catch (error) {
+				write(error.name + ": " + error.message)
+			}
+			console.log = original
+			
+			var result   = document.querySelector('#command-result')
+			var element  = document.querySelector
+								('#command-result .monospace')
+			var plain = buffer
+			buffer = ''
+			plain = plain.replaceAll(' ', '&nbsp;')
+			plain = plain.replace(/\n/g, '<br/>')
+			element.innerHTML = '<code>' + plain + '</code>'
+			result.style.zIndex = 10
+			result.style.display = 'block'
+		}
+		
+		var buffer = ''
+		function write(x) {
+			buffer += x + '\n'
 		}
 		
 		</script>
