@@ -214,6 +214,7 @@ public class Main extends HttpServlet {
 			FileWriter writer = new FileWriter(name + ".c");
 			writer.write(code);
 			writer.close();
+			result += "Warnings: \n";
 			Process p = Runtime.getRuntime().exec(compile);
 			int k;
 			InputStream pis = p.getErrorStream();
@@ -222,6 +223,7 @@ public class Main extends HttpServlet {
 				result += k >= 0 ? (char)k : "";
 			} while (k != -1);
 			
+			result += "\nOutputs: \n";
 			Process q = Runtime.getRuntime().exec(execute);
 			Killer killer = new Killer(q);
 			killer.start();
@@ -253,6 +255,7 @@ public class Main extends HttpServlet {
 			FileWriter writer = new FileWriter(name);
 			writer.write(code);
 			writer.close();
+			result += "Warnings: \n";
 			Process p = Runtime.getRuntime().exec(command);
 			Killer killer = new Killer(p);
 			killer.start();
@@ -263,6 +266,7 @@ public class Main extends HttpServlet {
 				result += k >= 0 ? (char)k : "";
 			} while (k != -1);
 			
+			result += "\nOutputs: \n";
 			InputStream in = p.getInputStream();
 			do {
 				k = in.read();

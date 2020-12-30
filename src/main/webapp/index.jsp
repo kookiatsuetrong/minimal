@@ -215,8 +215,8 @@ int main(void) {
 			}
 			
 			body {
-				scrollbar-color:	rgba(128,128,128, .5)
-									rgba(128,128,128, 0);
+				scrollbar-color: rgba(128,128,128, .5)
+								 rgba(128,128,128, 0);
 			}
 			
 			@media(max-width:575px) {
@@ -229,6 +229,7 @@ int main(void) {
 				#command-result,
 				#folder-result{
 					height: calc(100vh - 11.5rem);
+					border-radius: 1.2rem;
 				}
 				.btn {
 					
@@ -299,10 +300,20 @@ int main(void) {
 			var target = document.querySelector('#folder-target')
 			target.innerText = ''
 			for (var i in data) {
-				var s = "<a href='javascript:openFile(" +
-							'"' + data[i] + '"' + ")'>"
-				s += data[i] + '</a><br/>'
-				target.innerHTML += s
+				var t = ''
+				for (var j = 2; j < data[i].length; j++) {
+					if (data[i][j] == '/') {
+						t += "&nbsp;&nbsp;&nbsp;&nbsp;"
+					}
+				}
+				var f = data[i].split('/')
+				if (f.length > 1) {
+					t += "'--&nbsp;" + f[ f.length - 1 ]
+					var s = "<a href='javascript:openFile(" +
+								'"' + data[i] + '"' + ")'>"
+					s += t + '</a><br/>'
+					target.innerHTML += s
+				}
 			}
 			parent.style.zIndex = 10
 			parent.style.display = 'block'
@@ -357,14 +368,20 @@ int main(void) {
 		
 		async function execute(command) {
 			var element = document.querySelector('#command')
-			command = decodeURI(element.value)
+			command = encodeURIComponent(element.value)
 			var response = await fetch('/execute?command=' + command)
 			var plain    = await response.text()
 			var result   = document.querySelector('#command-result')
 			var element  = document.querySelector
 								('#command-result .monospace')
-			plain = plain.replaceAll(' ', '&nbsp;')
+								
+			plain = plain.replace(/âââ /g, "'-- ")
+			plain = plain.replace(/âÂ Â  /g,   "    ")
+			plain = plain.replace(/âââ /g, "'-- ")
+			console.log(plain)
 			plain = plain.replace(/\n/g, '<br/>')
+			plain = plain.replaceAll(' ', '&nbsp;')
+			
 			element.innerHTML = '<code>' + plain + '</code>'
 			result.style.zIndex = 10
 			result.style.display = 'block'
