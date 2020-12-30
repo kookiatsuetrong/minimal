@@ -303,7 +303,7 @@ int main(void) {
 				var t = ''
 				for (var j = 2; j < data[i].length; j++) {
 					if (data[i][j] == '/') {
-						t += "&nbsp;&nbsp;&nbsp;&nbsp;"
+						t += "'&nbsp;&nbsp;&nbsp;"
 					}
 				}
 				var f = data[i].split('/')
@@ -338,6 +338,8 @@ int main(void) {
 			command.style.display = 'none'
 			
 			currentEditorFile = file
+			var command = document.getElementById('command')
+			command.placeholder = file
 		}
 		
 		async function saveFile() {
@@ -378,7 +380,6 @@ int main(void) {
 			plain = plain.replace(/âââ /g, "'-- ")
 			plain = plain.replace(/âÂ Â  /g,   "    ")
 			plain = plain.replace(/âââ /g, "'-- ")
-			console.log(plain)
 			plain = plain.replace(/\n/g, '<br/>')
 			plain = plain.replaceAll(' ', '&nbsp;')
 			
