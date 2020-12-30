@@ -1,15 +1,15 @@
 import java.io.File;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.io.FileWriter;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Scanner;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,25 +23,10 @@ public class Main extends HttpServlet {
 	@Override public void 
 	init() {
 		String real = this.getServletContext().getRealPath(".");
-		/*
-		try {
-			File file = new File(real + "/WEB-INF/minimal.sml");
-			Scanner in = new Scanner(file);
-			while (in.hasNextLine()) {
-				String line = in.nextLine();
-				String [] fields = line.split("=");
-				for (int i = 0; i < fields.length; i++) {
-					fields[i] = fields[i].trim();
-				}
-				if (fields.length >= 2 && fields[0].equals("path")) {
-					path = fields[1];
-				}
-			}
-			path = new File(path).getAbsolutePath();
-		} catch (Exception e) { }
-		*/
+
 		ignore.add("node_modules");
 		ignore.add("target");
+		
 		try {
 			File m = new File(real + "/WEB-INF/mime.sml");
 			Scanner in = new Scanner(m);
@@ -111,9 +96,6 @@ public class Main extends HttpServlet {
 			} while (k != -1);
 		} catch (Exception e) {
 			result.append(e.toString());
-		} finally {
-//			File f = new File(name);
-//			f.delete();
 		}
 		return result.toString();
 	}
@@ -145,7 +127,7 @@ public class Main extends HttpServlet {
 				writer.write(text);
 				writer.close();
 				context.println("Success");
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				context.println(e.toString());
 			}
 		}
@@ -222,12 +204,87 @@ public class Main extends HttpServlet {
 	void
 	runC(Context context) {
 		context.response.setContentType("text/plain");
-		context.print("Running C");
+		String code = context.request.getParameter("text");
+
+		String name    = "code-" + random();
+		String compile = "cc -o " + name + " " + name + ".c";
+		String execute = "./" + name;
+		String result = "";
+		try {
+			FileWriter writer = new FileWriter(name + ".c");
+			writer.write(code);
+			writer.close();
+			Process p = Runtime.getRuntime().exec(compile);
+			int k;
+			InputStream pis = p.getErrorStream();
+			do {
+				k = pis.read();
+				result += k >= 0 ? (char)k : "";
+			} while (k != -1);
+			
+			Process q = Runtime.getRuntime().exec(execute);
+			Killer killer = new Killer(q);
+			killer.start();
+			InputStream qis = q.getInputStream();
+			do {
+				k = qis.read();
+				result += k >= 0 ? (char)k : "";
+			} while (k != -1);
+		} catch (Exception e) {
+			result = "Error";	
+		} finally {
+			File f = new File(name);
+			f.delete();
+			File g = new File(name + ".c");
+			g.delete();
+		}
+		context.println(result);
 	}
 	
-	void 
+	void
 	runJava(Context context) {
 		context.response.setContentType("text/plain");
-		context.print("Running Java");
+		
+		String name = "code-" + random() + ".java";
+		String command = "java " + name;
+		String code = context.request.getParameter("text");
+		String result = "";
+		try {
+			FileWriter writer = new FileWriter(name);
+			writer.write(code);
+			writer.close();
+			Process p = Runtime.getRuntime().exec(command);
+			Killer killer = new Killer(p);
+			killer.start();
+			int k;
+			InputStream error = p.getErrorStream();
+			do {
+				k = error.read();
+				result += k >= 0 ? (char)k : "";
+			} while (k != -1);
+			
+			InputStream in = p.getInputStream();
+			do {
+				k = in.read();
+				result += k >= 0 ? (char)k : "";
+			} while (k != -1);
+		} catch (Exception e) {
+			result = "Timeout";	
+		} finally {
+			File f = new File(name);
+			f.delete();
+		}
+		context.println(result);
+	}
+	
+	String slot = "abcdefghijklmnopqrstuvwxyz";
+	char[] all  = slot.toCharArray();
+	String random() {
+		String s = "";
+		for (int i = 0; i < 10; i++) {
+			int r = (int)(Math.random() * 26);
+			s += all[r];
+		}
+		return s;
 	}
 }

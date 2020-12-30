@@ -20,11 +20,11 @@
 					class="form-control monospace command-bar-element"
 					spellcheck="false" 
 					autocapitalize="off" />
-				<a class="btn btn-outline-secondary 
-								dropdown-toggle dropdown-toggle-split
-								command-bar-element" 
-						data-bs-toggle="dropdown">
-					<span class="visually-hidden">&gt;</span>
+				<a class="btn btn-outline-secondary command-bar-element"
+				   style="border-top-right-radius:.4rem; 
+							border-bottom-right-radius:.4rem;
+				   "
+					data-bs-toggle="dropdown">&nbsp;
 				</a>
 				<ul class="dropdown-menu">
 					<li><a class="dropdown-item disabled"
@@ -49,6 +49,15 @@
 					<li><a class="dropdown-item"
 						   href="javascript:switchTheme()"
 						   >Switch Theme</a></li>
+					<li><a class="dropdown-item"
+						   href="javascript:runC()"
+						   >Run C</a></li>
+					<li><a class="dropdown-item"
+						   href="javascript:runJava()"
+						   >Run Java</a></li>
+					<li><a class="dropdown-item"
+						   href="javascript:runJavaScript()"
+						   >Run JavaScript</a></li>
 					<li><a class="dropdown-item disabled"
 						   href=""
 						   >Download Folder</a></li>
@@ -75,7 +84,7 @@
 				   class="btn btn-sm btn-danger"
 				   style="float:right; margin-top:.75rem; ">Close</a>
 			</div>
-			<div class="container-fluid" id="folder-target">	
+			<div class="container-fluid monospace" id="folder-target">	
 			</div>
 		</div>
 		
@@ -84,7 +93,15 @@
 				id="editor"
 				class="form-control editor-element monospace"
 				spellcheck="false"
-				rows="8"></textarea>
+				rows="8"
+>#include <stdio.h>
+int main(void) {
+	for (int i = 0; i < 10; i++) {
+		printf("Value %d\n", i);
+	}
+	return 0;
+}
+</textarea>
 		</div>
 		
 		<style>
@@ -92,12 +109,6 @@
 				--editor: white;
 				--editor-text: #333;
 				--editor-line: #bbb;
-			}
-			
-			@media(max-width:576px) {
-				html {
-					font-size: 10px;
-				}
 			}
 			
 			body {
@@ -124,6 +135,10 @@
 				font-family: monospace;
 				font-size: 1.15rem;
 				border-radius: .4rem;
+			}
+			
+			code {
+				font-size: 0.65rem;
 			}
 			
 			.btn {
@@ -162,12 +177,8 @@
 				min-height: 3.5rem;
 				background: #eee;
 				border-radius: .2rem;
-				height: calc(100vh - 4.72rem);
+				height: calc(100vh - 4.715rem);
 				overflow-y: scroll;
-			}
-			
-			#command-result .monospace {
-				font-size: 1rem;
 			}
 			
 			#folder-result {
@@ -179,7 +190,8 @@
 				opacity: 0.95;
 				min-height: 3.5rem;
 				background: #eee;
-				height: calc(100vh - 4.72rem);
+				border-radius: .2rem;
+				height: calc(100vh - 4.715rem);
 				overflow-y: scroll;
 			}
 			
@@ -200,9 +212,29 @@
 				opacity: .85;
 			}
 			
+			code {
+				color: #333;
+			}
+			
 			body {
 				scrollbar-color:	rgba(128,128,128, .5)
 									rgba(128,128,128, 0);
+			}
+			
+			@media(max-width:575px) {
+				#editor {
+					font-size: 0.85rem;
+					height: calc(100vh - 11rem);
+					border-bottom-left-radius: 1.5rem;
+					border-bottom-right-radius: 1.5rem;
+				}
+				#command-result,
+				#folder-result{
+					height: calc(100vh - 11.5rem);
+				}
+				.btn {
+					
+				}
 			}
 			
 			::-webkit-scrollbar {
@@ -347,6 +379,45 @@
 			element.innerText = ''
 			result.style.zIndex = -10
 			result.style.display = 'none'
+		}
+		
+		async function runJava() {
+			var editor = document.querySelector('#editor')
+			var h = { 'Content-Type': 'application/x-www-form-urlencoded' }
+			var detail = {  method: 'POST',
+							headers: h,
+							body:  'text=' + encodeURIComponent(editor.value)
+							}
+			var response = await fetch('/run-java', detail)
+			var plain = await response.text()
+			var result   = document.querySelector('#command-result')
+			var element  = document.querySelector
+								('#command-result .monospace')
+			plain = plain.replaceAll(' ', '&nbsp;')
+			plain = plain.replace(/\n/g, '<br/>')
+			element.innerHTML = '<code>' + plain + '</code>'
+			result.style.zIndex = 10
+			result.style.display = 'block'
+		}
+		
+		
+		async function runC() {
+			var editor = document.querySelector('#editor')
+			var h = { 'Content-Type': 'application/x-www-form-urlencoded' }
+			var detail = {  method: 'POST',
+							headers: h,
+							body:  'text=' + encodeURIComponent(editor.value)
+							}
+			var response = await fetch('/run-c', detail)
+			var plain = await response.text()
+			var result   = document.querySelector('#command-result')
+			var element  = document.querySelector
+								('#command-result .monospace')
+			plain = plain.replaceAll(' ', '&nbsp;')
+			plain = plain.replace(/\n/g, '<br/>')
+			element.innerHTML = '<code>' + plain + '</code>'
+			result.style.zIndex = 10
+			result.style.display = 'block'
 		}
 		
 		</script>
