@@ -24,6 +24,7 @@ public class Main extends HttpServlet {
 	init() {
 		String real = this.getServletContext().getRealPath(".");
 
+		ignore.add("tomcat");
 		ignore.add("node_modules");
 		ignore.add("target");
 		
@@ -51,14 +52,15 @@ public class Main extends HttpServlet {
 			Context context = new Context(request, response);
 			String uri = request.getRequestURI();
 			switch (uri) {
-				default             -> showError(context);
-				case "/"            -> showIndex(context);
-				case "/run-c"       -> runC(context);
-				case "/run-java"    -> runJava(context);
-				case "/list-folder" -> listFolder(context);
-				case "/read-file"   -> readFile(context);
-				case "/write-file"  -> writeFile(context);
-				case "/execute"     -> execute(context);
+				default              -> showError(context);
+				case "/"             -> showIndex(context);
+				case "/run-c"        -> runC(context);
+				case "/run-java"     -> runJava(context);
+				case "/list-folder"  -> listFolder(context);
+				case "/list-project" -> listProject(context);
+				case "/read-file"    -> readFile(context);
+				case "/write-file"   -> writeFile(context);
+				case "/execute"      -> execute(context);
 			}
 		} catch (Exception e) { }
 	}
@@ -162,6 +164,25 @@ public class Main extends HttpServlet {
 			}
 		}
 		return current + "\n" + result;
+	}
+	
+	void
+	listProject(Context context) {
+		context.response.setContentType("text/plain");
+		StringBuffer buffer = new StringBuffer();
+		File file = new File(".");
+		String[] all = file.list();
+		for (String s : all) {
+			File folder = new File(s);
+			if (folder.isDirectory()) {
+				File sub = new File(s + "/minimal");
+				if (sub.isDirectory()) {
+					buffer.append(s);
+					buffer.append("\n");
+				}
+			}
+		}
+		context.println(buffer.toString());
 	}
 	
 	void

@@ -27,9 +27,9 @@
 					data-bs-toggle="dropdown">&nbsp;
 				</a>
 				<ul class="dropdown-menu">
-					<li><a class="dropdown-item disabled"
-						   href=""
-						   >Dashboard</a></li>
+					<li><a class="dropdown-item"
+						   href="javascript:listProject()"
+						   >Summary</a></li>
 					<li><a class="dropdown-item"
 						   href="javascript:execute()"
 						   >Execute</a></li>
@@ -70,7 +70,7 @@
 			<div class="container-fluid">
 				<a href="javascript:clearResult()"
 				   class="btn btn-sm btn-danger"
-				   style="float:right; margin-top:.75rem; ">Clear</a>
+				   style="float:right; margin: 1.25rem 0; ">Clear</a>
 			</div>
 			<div class="container-fluid monospace">	
 			</div>
@@ -80,9 +80,19 @@
 			<div class="container-fluid">
 				<a href="javascript:closeFolder()"
 				   class="btn btn-sm btn-danger"
-				   style="float:right; margin-top:.75rem; ">Close</a>
+				   style="float:right; margin: 1.25rem 0; ">Close</a>
 			</div>
 			<div class="container-fluid monospace" id="folder-target">	
+			</div>
+		</div>
+		
+		<div id="web-view">
+			<div class="container-fluid">
+				<a href="javascript:closeView()"
+				   class="btn btn-sm btn-danger"
+				   style="float:right; margin: .65rem; ">Close</a>
+			</div>
+			<div class="container-fluid" id="web-view-detail">
 			</div>
 		</div>
 		
@@ -248,6 +258,7 @@ int main(void) {
 				background: rgba(128,128,128, 0.8);
 				border-radius: .25rem;
 			}
+			
 		</style>
 		
 		<script src="/bootstrap.bundle.js"></script>
@@ -352,10 +363,10 @@ int main(void) {
 			var h = { 'Content-Type': 'application/x-www-form-urlencoded' }
 			var detail = {  method: 'POST',
 							headers: h,
-							body:  encodeURI('name=' + 
-										currentEditorFile + 
-										'&text=' + 
-										editor.value)
+							body:  'name=' + 
+									currentEditorFile + 
+									'&text=' + 
+									encodeURIComponent(editor.value)
 							}
 			var response = await fetch('/write-file', detail)
 			var plain = await response.text()
@@ -371,7 +382,11 @@ int main(void) {
 		async function execute(command) {
 			var element = document.querySelector('#command')
 			command = encodeURIComponent(element.value)
-			var response = await fetch('/execute?command=' + command)
+			var h = { 'Content-Type': 'application/x-www-form-urlencoded' }
+			var detail = {  method: 'POST',
+							headers: h,
+							body:  'command=' + command }
+			var response = await fetch('/execute', detail)
 			var plain    = await response.text()
 			var result   = document.querySelector('#command-result')
 			var element  = document.querySelector
@@ -464,5 +479,110 @@ int main(void) {
 		}
 		
 		</script>
+		
+		<script>
+			async function listProject() {
+				var response = await fetch("/list-project")
+				var data     = await response.text()
+				var result   = data.trim().split("\n")
+				var html     = ''
+				for (var i in result) {
+					html += "<a href='javascript:showSpecification(" +
+							'"' + result[i] + '")' + "'>" +
+							result[i] + "</a><br/>\n"
+				}
+				
+				var detail = document.querySelector('#web-view-detail')
+				detail.innerHTML = html
+				var view = document.querySelector('#web-view')
+				view.style.display = 'block'
+			}
+			
+			async function showSpecification(project) {
+				var response = await fetch("/read-file?name=" +
+										"./" + project + "/minimal/" +
+										"specification.html")
+				var data = await response.text()
+			   
+				var detail = document.querySelector('#web-view-detail')
+				detail.innerHTML = data
+				var view = document.querySelector('#web-view')
+				view.style.display = 'block'
+			}
+			function closeView() {
+				var view = document.querySelector('#web-view')
+				view.style.display = 'none'
+			}
+		</script>
+		<style>
+			#web-view {
+				display: none;
+				background: #eee;
+				position: absolute;
+				width: 100%;
+				min-height: calc(100vh - 3.45rem);
+				margin-top: .5rem;
+				padding-top: 1rem;
+			}
+			
+			#web-view-detail {
+				
+			}
+			
+			story {
+				display: block;
+				background: white;
+				border: 1px solid #ddd;
+				border-bottom: 1px solid #ccc;
+				margin-bottom: 1rem;
+				padding: 1rem;
+				border-radius: 1rem;
+			}
+			story title {
+				display: block;
+			}
+			story detail {
+				display: block;
+				white-space: pre;
+				font-family: monospace;
+				font-size: 1.25rem;
+				tab-size: 4;
+			}
+			story priority {
+				display: inline-block;
+				color: #555;
+				opacity: .85;
+			}
+			story priority:after {
+				content: " / ";
+			}
+			story status {
+				display: inline-block;
+				color: #555;
+				opacity: .85;
+			}
+			story status:after {
+				content: " / ";
+			}
+			story staff {
+				display: inline-block;
+				color: #555;
+				opacity: .85;
+			}
+			
+			/*
+			<story>
+				<title>Member Registration</title>
+				<detail>
+					As a visitor
+					I want to register my email
+					so I can log in as a member
+				</detail>
+				<priority>Medium</priority>
+				<status>Design</status>
+				<staff>?</staff>
+			</story>
+			*/
+		</style>
 	</body>
 </html>
