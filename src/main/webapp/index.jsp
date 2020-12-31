@@ -14,7 +14,10 @@
 			<div class="input-group"
 				 id="command-bar">
 				<a class="btn btn-outline-secondary command-bar-element"
+				   data-bs-toggle="dropdown"
 					>minimal</a>
+				<ul class="dropdown-menu" id="project-menu">
+				</ul>
 				<input
 					id="command"
 					class="form-control monospace command-bar-element"
@@ -27,9 +30,6 @@
 					data-bs-toggle="dropdown">&nbsp;
 				</a>
 				<ul class="dropdown-menu">
-					<li><a class="dropdown-item"
-						   href="javascript:listProject()"
-						   >Summary</a></li>
 					<li><a class="dropdown-item"
 						   href="javascript:execute()"
 						   >Execute</a></li>
@@ -90,7 +90,7 @@
 			<div class="container-fluid">
 				<a href="javascript:closeView()"
 				   class="btn btn-sm btn-danger"
-				   style="float:right; margin: .65rem; ">Close</a>
+				   style="float:right; margin-top: 0.2rem; ">Close</a>
 			</div>
 			<div class="container-fluid" id="web-view-detail">
 			</div>
@@ -481,10 +481,25 @@ int main(void) {
 		</script>
 		
 		<script>
+			listProject()
+			
 			async function listProject() {
 				var response = await fetch("/list-project")
 				var data     = await response.text()
 				var result   = data.trim().split("\n")
+				var menu     = ''
+									
+				for (var i in result) {
+					menu += "<li><a class='dropdown-item' " +
+							"href='javascript:showSpecification(" +
+							'"' + result[i] + '")' + "'>" +
+							result[i] + "</a>"
+				}
+				
+				var main = document.querySelector('#project-menu')
+				main.innerHTML = menu
+				
+				/*
 				var html     = ''
 				for (var i in result) {
 					html += "<a href='javascript:showSpecification(" +
@@ -495,7 +510,8 @@ int main(void) {
 				var detail = document.querySelector('#web-view-detail')
 				detail.innerHTML = html
 				var view = document.querySelector('#web-view')
-				view.style.display = 'block'
+				view.style.display = 'block' 
+				*/
 			}
 			
 			async function showSpecification(project) {
@@ -505,6 +521,7 @@ int main(void) {
 				var data = await response.text()
 			   
 				var detail = document.querySelector('#web-view-detail')
+				data = '<h1>' + project + '</h1>' + data
 				detail.innerHTML = data
 				var view = document.querySelector('#web-view')
 				view.style.display = 'block'
@@ -522,7 +539,7 @@ int main(void) {
 				width: 100%;
 				min-height: calc(100vh - 3.45rem);
 				margin-top: .5rem;
-				padding-top: 1rem;
+				padding-top: 0.5rem;
 			}
 			
 			#web-view-detail {
