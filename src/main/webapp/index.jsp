@@ -176,31 +176,35 @@ int main(void) {
 			}
 			
 			#command-result {
-				margin-top: 0.75rem;
 				position: absolute;
 				z-index: -10;
-				width: calc( 100% - 2rem);
-				margin-left: 1rem;
-				opacity: 0.90;
+				width: calc(100% - 1.5rem);
+				height: calc(100vh - 4.2rem);
+				margin-top: 0.5rem;
+				margin-left: 0.75rem;
 				min-height: 3.5rem;
-				background: #eee;
-				border-radius: .2rem;
-				height: calc(100vh - 4.715rem);
+				border-radius: .4rem;
 				overflow-y: scroll;
+				opacity: .95;
+				color: var(--editor-text);
+				background: var(--editor);
+				border: 1px solid var(--editor-line);
 			}
 			
 			#folder-result {
-				margin-top: 0.75rem;
 				position: absolute;
 				z-index: -10;
-				width: calc( 100% - 2rem);
-				margin-left: 1rem;
-				opacity: 0.95;
+				width: calc(100% - 1.5rem);
+				height: calc(100vh - 4.2rem);
+				margin-top: 0.5rem;
+				margin-left: 0.75rem;
 				min-height: 3.5rem;
-				background: #eee;
-				border-radius: .2rem;
-				height: calc(100vh - 4.715rem);
+				border-radius: .4rem;
 				overflow-y: scroll;
+				opacity: .95;
+				color: var(--editor-text);
+				background: var(--editor);
+				border: 1px solid var(--editor-line);
 			}
 			
 			#folder-target {
@@ -209,19 +213,21 @@ int main(void) {
 			
 			#folder-target a {
 				text-decoration: none;
-				color: #888;
+				color: var(--editor-text);
+				opacity: .75;
 			}
 			
 			#folder-target a:hover {
-				color: black;
+				opacity: 1.0;
 			}
 			
 			.dropdown-menu {
-				opacity: .85;
+				background: #aaa;
+				opacity: .95;
 			}
 			
 			code {
-				color: #333;
+				color: var(--editor-text);
 			}
 			
 			body {
@@ -256,7 +262,7 @@ int main(void) {
 
 			::-webkit-scrollbar-thumb {
 				background: rgba(128,128,128, 0.8);
-				border-radius: .25rem;
+				border-radius: .4rem;
 			}
 			
 		</style>
@@ -289,8 +295,8 @@ int main(void) {
 			current = current.trim()
 			if (current == 'white') {
 				root.style.setProperty('--editor',      'black')
-				root.style.setProperty('--editor-text', '#f0f0f0')
-				root.style.setProperty('--editor-line', '#888')
+				root.style.setProperty('--editor-text', '#eee')
+				root.style.setProperty('--editor-line', '#666')
 			}
 			if (current == 'black') {
 				root.style.setProperty('--editor',      'white')
@@ -495,6 +501,9 @@ int main(void) {
 							'"' + result[i] + '")' + "'>" +
 							result[i] + "</a>"
 				}
+					menu += "<li><a class='dropdown-item' " +
+							"href='javascript:listProject()'>" +
+							"Refresh</a>"
 				
 				var main = document.querySelector('#project-menu')
 				main.innerHTML = menu
@@ -556,12 +565,15 @@ int main(void) {
 				border-radius: 1rem;
 				border-left: 2rem solid #789;
 			}
+			
 			story[priority=high] {
 				border-left: 2rem solid #c33;
 			}
+			
 			story[priority=medium] {
 				border-left: 2rem solid gold;
 			}
+			
 			story[priority=low] {
 				border-left: 2rem solid green;
 			}
@@ -569,6 +581,7 @@ int main(void) {
 			story title {
 				display: block;
 			}
+			
 			story detail {
 				margin-top: -1.5rem;
 				display: block;
@@ -577,12 +590,14 @@ int main(void) {
 				font-size: 1.25rem;
 				tab-size: 4;
 			}
+			
 			story status {
 				display: inline-block;
 				color: #555;
 				opacity: .85;
 				float: right;
 			}
+			
 			story staff {
 				display: inline-block;
 				color: #555;
