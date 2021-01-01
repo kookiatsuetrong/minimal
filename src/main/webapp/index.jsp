@@ -175,7 +175,8 @@ int main(void) {
 				border-color: var(--editor-line);
 			}
 			
-			#command-result {
+			#command-result,
+			#folder-result {
 				position: absolute;
 				z-index: -10;
 				width: calc(100% - 1.5rem);
@@ -192,19 +193,7 @@ int main(void) {
 			}
 			
 			#folder-result {
-				position: absolute;
-				z-index: -10;
-				width: calc(100% - 1.5rem);
-				height: calc(100vh - 4.2rem);
-				margin-top: 0.5rem;
-				margin-left: 0.75rem;
-				min-height: 3.5rem;
-				border-radius: .4rem;
-				overflow-y: scroll;
-				opacity: .95;
-				color: var(--editor-text);
-				background: var(--editor);
-				border: 1px solid var(--editor-line);
+				
 			}
 			
 			#folder-target {
@@ -488,6 +477,10 @@ int main(void) {
 		
 		<script>
 			listProject()
+			var date = new Date()
+			if (date.getHours() >= 18 || date.getHours() < 6) {
+				switchTheme()
+			}
 			
 			async function listProject() {
 				var response = await fetch("/list-project")
@@ -543,7 +536,8 @@ int main(void) {
 		<style>
 			#web-view {
 				display: none;
-				background: #eee;
+				background: var(--editor);
+				color: var(--editor-text);
 				position: absolute;
 				width: 100%;
 				min-height: calc(100vh - 3.45rem);
@@ -557,9 +551,8 @@ int main(void) {
 			
 			story {
 				display: block;
-				background: white;
-				border: 1px solid #ddd;
-				border-bottom: 1px solid #ccc;
+				background: var(--editor);
+				border: 1px solid var(--editor-line);
 				margin-bottom: 1rem;
 				padding: .5rem 1rem;
 				border-radius: 1rem;
@@ -593,14 +586,14 @@ int main(void) {
 			
 			story status {
 				display: inline-block;
-				color: #555;
+				color: var(--editor-text);
 				opacity: .85;
 				float: right;
 			}
 			
 			story staff {
 				display: inline-block;
-				color: #555;
+				color: var(--editor-text);
 				opacity: .85;
 				margin-right: 2rem;
 			}
