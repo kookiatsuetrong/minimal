@@ -4,7 +4,7 @@
 ตามแนวคิด Software Engineering รองรับ Software ทุกชนิด 
 เพราะใช้ Fundamental Activity ตั้งแต่ Software Specification 
 มีระบบการเขียน Requirement แบบ XML แสดงผลเข้าใจได้ง่าย 
-ปรับแก้ข้อมูลแล้วลง Git หรือ Version Control ได้ทันที
+ปรับแก้ข้อมูลแล้ว Push ลง Git หรือ Version Control ได้ทันที
 
 ใช้ได้บนอุปกรณ์ทุกชนิด ทั้ง iPhone, iPad และ Computer ทุกระบบ 
 ผู้ใช้ไม่ต้องติดตั้งอะไรทั้งสิ้น ใช้ Web Browser ทั่วไป 
@@ -16,16 +16,16 @@ Build Project ที่ต้องการได้ทันที
 ![](minimal.png)
 
 The project “minimal” is an integrated development 
-environment that follows software engineering process. 
-It supports all type of software, starting from 
-software specification. It accepts requirements 
-in XML format so all requirements can store in 
+environment that follows software engineering disciplines. 
+It supports any type of software. Starting from 
+software specification by accepting requirements 
+in XML format so everything can push directly to
 Git or any version control system.
 
-It can run on any modern web browser, on iPhone, 
-iPad and a computer. No additional software to download, 
-just open the web browser and build any project from minimal.
+It can run on any modern web browser: iPhone, 
+iPad and a computer. No additional software required, 
+just open the web browser and build any project 
+from this system.
 
 Try to clone and create a pull request from here: 
 https://github.com/kookiatsuetrong/minimal
-
