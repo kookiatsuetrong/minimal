@@ -69,32 +69,13 @@
 			</div>
 		</div>
 		
-		<div id="command-result">
+		<div id="dialog">
 			<div class="container-fluid">
-				<a href="javascript:clearResult()"
-				   class="btn btn-sm btn-danger"
-				   style="float:right; margin: 1.25rem 0; ">Clear</a>
-			</div>
-			<div class="container-fluid monospace">	
-			</div>
-		</div>
-		
-		<div id="folder-result">
-			<div class="container-fluid">
-				<a href="javascript:closeFolder()"
+				<a href="javascript:closeDialog()"
 				   class="btn btn-sm btn-danger"
 				   style="float:right; margin: 1.25rem 0; ">Close</a>
 			</div>
-			<div class="container-fluid monospace" id="folder-target">	
-			</div>
-		</div>
-		<div id="process-result">
-			<div class="container-fluid">
-				<a href="javascript:closeProcess()"
-				   class="btn btn-sm btn-danger"
-				   style="float:right; margin: 1.25rem 0; ">Close</a>
-			</div>
-			<div class="container-fluid monospace" id="process-detail">	
+			<div class="container-fluid monospace" id="dialog-detail">	
 			</div>
 		</div>
 		
@@ -189,9 +170,7 @@ int main(void) {
 			border-color: var(--editor-line);
 		}
 
-		#command-result,
-		#folder-result,
-		#process-result {
+		#dialog {
 			position: absolute;
 			z-index: 10;
 			display: none;
@@ -208,21 +187,13 @@ int main(void) {
 			border: 1px solid var(--editor-line);
 		}
 
-		#folder-result {
-
-		}
-
-		#folder-target {
-			font-family: monospace;
-		}
-
-		#folder-target a {
+		#dialog-detail a {
 			text-decoration: none;
 			color: var(--editor-text);
 			opacity: .75;
 		}
 
-		#folder-target a:hover {
+		#dialog-detail a:hover {
 			opacity: 1.0;
 		}
 
@@ -247,8 +218,7 @@ int main(void) {
 				border-bottom-left-radius: 1.5rem;
 				border-bottom-right-radius: 1.5rem;
 			}
-			#command-result,
-			#folder-result{
+			#dialog {
 				height: calc(100vh - 11.5rem);
 				border-radius: 1.2rem;
 			}
@@ -383,6 +353,11 @@ int main(void) {
 			root.style.setProperty('--editor-line', '#bbb')
 		}
 	}
+	
+	function closeDialog() {
+		var parent = document.querySelector('#dialog')
+		parent.style.display = 'none'
+	}
 
 	async function showFolder() {
 		var response = await fetch('/list-folder')
@@ -392,8 +367,8 @@ int main(void) {
 		for (var i in plain) {
 			data.push(plain[i])
 		}
-		var parent = document.querySelector('#folder-result')
-		var target = document.querySelector('#folder-target')
+		var parent = document.querySelector('#dialog')
+		var target = document.querySelector('#dialog-detail')
 		target.innerText = ''
 		for (var i in data) {
 			var t = ''
@@ -424,12 +399,8 @@ int main(void) {
 		var plain    = await response.text()
 		document.getElementById('editor').value = plain
 		
-		var tree = document.querySelector('#folder-result')
-		tree.style.display = 'none'
-		var command = document.querySelector('#command-result')
-		command.style.display = 'none'
-		var process = document.querySelector('#process-result')
-		process.style.display = 'none'
+		var dialog = document.querySelector('#dialog')
+		dialog.style.display = 'none'
 
 		currentEditorFile = file
 		var command = document.getElementById('command')
@@ -471,26 +442,18 @@ int main(void) {
 						body:  'command=' + command }
 		var response = await fetch('/execute', detail)
 		var plain    = await response.text()
-		var result   = document.querySelector('#command-result')
-		var element  = document.querySelector
-							('#command-result .monospace')
-
+		
 		plain = plain.replace(/âââ /g, "'-- ")
 		plain = plain.replace(/âÂ Â  /g,   "    ")
 		plain = plain.replace(/âââ /g, "'-- ")
 		plain = plain.replace(/\n/g, '<br/>')
 		plain = plain.replaceAll(' ', '&nbsp;')
-
-		element.innerHTML = '<code>' + plain + '</code>'
-		result.style.display = 'block'
-	}
-
-	function clearResult() {
-		var result   = document.querySelector('#command-result')
-		var element  = document.querySelector
-							('#command-result .monospace')
-		element.innerText = ''
-		result.style.display = 'none'
+		
+		var detail = document.querySelector
+							('#dialog-detail')
+		detail.innerHTML = '<code>' + plain + '</code>'
+		var dialog = document.querySelector('#dialog')
+		dialog.style.display = 'block'
 	}
 
 	async function runJava() {
@@ -502,13 +465,14 @@ int main(void) {
 						}
 		var response = await fetch('/run-java', detail)
 		var plain = await response.text()
-		var result   = document.querySelector('#command-result')
-		var element  = document.querySelector
-							('#command-result .monospace')
 		plain = plain.replaceAll(' ', '&nbsp;')
 		plain = plain.replace(/\n/g, '<br/>')
-		element.innerHTML = '<code>' + plain + '</code>'
-		result.style.display = 'block'
+		
+		var detail = document.querySelector
+							('#dialog-detail')
+		detail.innerHTML = '<code>' + plain + '</code>'
+		var dialog = document.querySelector('#dialog')
+		dialog.style.display = 'block'
 	}
 
 	async function runC() {
@@ -520,13 +484,14 @@ int main(void) {
 						}
 		var response = await fetch('/run-c', detail)
 		var plain = await response.text()
-		var result   = document.querySelector('#command-result')
-		var element  = document.querySelector
-							('#command-result .monospace')
 		plain = plain.replaceAll(' ', '&nbsp;')
 		plain = plain.replace(/\n/g, '<br/>')
-		element.innerHTML = '<code>' + plain + '</code>'
-		result.style.display = 'block'
+		
+		var detail = document.querySelector
+							('#dialog-detail')
+		detail.innerHTML = '<code>' + plain + '</code>'
+		var dialog = document.querySelector('#dialog')
+		dialog.style.display = 'block'
 	}
 
 	function runJavaScript() {
@@ -540,15 +505,14 @@ int main(void) {
 		}
 		console.log = original
 
-		var result   = document.querySelector('#command-result')
-		var element  = document.querySelector
-							('#command-result .monospace')
+		var dialog = document.querySelector('#dialog')
+		var detail = document.querySelector('#dialog-detail')
 		var plain = buffer
 		buffer = ''
 		plain = plain.replaceAll(' ', '&nbsp;')
 		plain = plain.replace(/\n/g, '<br/>')
-		element.innerHTML = '<code>' + plain + '</code>'
-		result.style.display = 'block'
+		detail.innerHTML = '<code>' + plain + '</code>'
+		dialog.style.display = 'block'
 	}
 
 	function write(x) {
@@ -569,14 +533,14 @@ int main(void) {
 				html += line + "<br/>"
 			}
 		}
-		var detail = document.querySelector('#process-detail')
+		var detail = document.querySelector('#dialog-detail')
 		detail.innerHTML = html
-		var main   = document.querySelector('#process-result')
-		main.style.display = 'block'
+		var dialog = document.querySelector('#dialog')
+		dialog.style.display = 'block'
 	}
 
 	async function closeProcess() {
-		var main   = document.querySelector('#process-result')
+		var main   = document.querySelector('#dialog')
 		main.style.display = 'none'
 	}
 
