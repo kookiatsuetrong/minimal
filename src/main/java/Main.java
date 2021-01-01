@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Scanner;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ public class Main extends HttpServlet {
 	
 	Map<String,String> mime = new HashMap<>();
 	List<String> ignore = new ArrayList<>();
+	List<Process> jobs = new ArrayList<>();
 	
 	@Override public void 
 	init() {
@@ -43,6 +45,11 @@ public class Main extends HttpServlet {
 		} catch (Exception e) { }
 	}
 	
+	@Override public void
+	destroy() {
+		jobs.forEach(p -> p.destroy());
+	}
+	
 	@Override public void 
 	service(HttpServletRequest request, 
 			HttpServletResponse response) {
@@ -58,11 +65,36 @@ public class Main extends HttpServlet {
 				case "/run-java"     -> runJava(context);
 				case "/list-folder"  -> listFolder(context);
 				case "/list-project" -> listProject(context);
+				case "/list-job"     -> listJob(context);
+				case "/kill"         -> killJob(context);
 				case "/read-file"    -> readFile(context);
 				case "/write-file"   -> writeFile(context);
 				case "/execute"      -> execute(context);
 			}
 		} catch (Exception e) { }
+	}
+	
+	void
+	listJob(Context context) {
+		context.response.setContentType("text/plain");
+		StringBuilder builder = new StringBuilder();
+		for (Process p : jobs) {
+			builder.append(p.pid());
+			builder.append(",");
+			ProcessHandle.Info info = p.info();
+			Optional o = info.commandLine();
+			o.ifPresent(data -> builder.append(data));
+			builder.append("\n");
+		}
+		context.println( builder.toString() );
+	}
+	
+	void 
+	killJob(Context context) {
+		context.response.setContentType("text/plain");
+		String pid = context.request.getParameter("pid");
+		String result = execute("kill " + pid);
+		context.print(result);
 	}
 	
 	void 
@@ -78,8 +110,10 @@ public class Main extends HttpServlet {
 		StringBuilder result = new StringBuilder();
 		try {
 			Process process = Runtime.getRuntime().exec(command);
-			Killer killer = new Killer(process);
-			killer.start();
+			
+			jobs.add(process);
+			// TODO: Add original command line here
+			
 			int k;
 			InputStream error = process.getErrorStream();
 			do {
@@ -96,6 +130,9 @@ public class Main extends HttpServlet {
 					result.append((char)k);
 				}
 			} while (k != -1);
+			
+			jobs.remove(process);
+			
 		} catch (Exception e) {
 			result.append(e.toString());
 		}
