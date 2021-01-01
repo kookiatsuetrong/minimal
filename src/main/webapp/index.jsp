@@ -552,54 +552,44 @@ int main(void) {
 				border: 1px solid #ddd;
 				border-bottom: 1px solid #ccc;
 				margin-bottom: 1rem;
-				padding: 1rem;
+				padding: .5rem 1rem;
 				border-radius: 1rem;
+				border-left: 2rem solid #789;
 			}
+			story[priority=high] {
+				border-left: 2rem solid #c33;
+			}
+			story[priority=medium] {
+				border-left: 2rem solid gold;
+			}
+			story[priority=low] {
+				border-left: 2rem solid green;
+			}
+			
 			story title {
 				display: block;
 			}
 			story detail {
+				margin-top: -1.5rem;
 				display: block;
-				white-space: pre;
+				white-space: pre-line;
 				font-family: monospace;
 				font-size: 1.25rem;
 				tab-size: 4;
-			}
-			story priority {
-				display: inline-block;
-				color: #555;
-				opacity: .85;
-			}
-			story priority:after {
-				content: " / ";
 			}
 			story status {
 				display: inline-block;
 				color: #555;
 				opacity: .85;
-			}
-			story status:after {
-				content: " / ";
+				float: right;
 			}
 			story staff {
 				display: inline-block;
 				color: #555;
 				opacity: .85;
+				margin-right: 2rem;
 			}
 			
-			/*
-			<story>
-				<title>Member Registration</title>
-				<detail>
-					As a visitor
-					I want to register my email
-					so I can log in as a member
-				</detail>
-				<priority>Medium</priority>
-				<status>Design</status>
-				<staff>?</staff>
-			</story>
-			*/
 		</style>
 	</body>
 </html>
