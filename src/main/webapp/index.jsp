@@ -193,7 +193,8 @@ int main(void) {
 		#folder-result,
 		#process-result {
 			position: absolute;
-			z-index: -10;
+			z-index: 10;
+			display: none;
 			width: calc(100% - 1.5rem);
 			height: calc(100vh - 4.2rem);
 			margin-top: 0.5rem;
@@ -410,13 +411,11 @@ int main(void) {
 				target.innerHTML += s
 			}
 		}
-		parent.style.zIndex = 10
 		parent.style.display = 'block'
 	}
 
 	function closeFolder() {
 		var parent = document.querySelector('#folder-result')
-		parent.style.zIndex = -10
 		parent.style.display = 'none'
 	}
 
@@ -424,13 +423,13 @@ int main(void) {
 		var response = await fetch('/read-file?name=' + file)
 		var plain    = await response.text()
 		document.getElementById('editor').value = plain
+		
 		var tree = document.querySelector('#folder-result')
-		tree.style.zIndex = -10
 		tree.style.display = 'none'
-
 		var command = document.querySelector('#command-result')
-		command.style.zIndex = -10
 		command.style.display = 'none'
+		var process = document.querySelector('#process-result')
+		process.style.display = 'none'
 
 		currentEditorFile = file
 		var command = document.getElementById('command')
@@ -483,7 +482,6 @@ int main(void) {
 		plain = plain.replaceAll(' ', '&nbsp;')
 
 		element.innerHTML = '<code>' + plain + '</code>'
-		result.style.zIndex = 10
 		result.style.display = 'block'
 	}
 
@@ -492,7 +490,6 @@ int main(void) {
 		var element  = document.querySelector
 							('#command-result .monospace')
 		element.innerText = ''
-		result.style.zIndex = -10
 		result.style.display = 'none'
 	}
 
@@ -511,7 +508,6 @@ int main(void) {
 		plain = plain.replaceAll(' ', '&nbsp;')
 		plain = plain.replace(/\n/g, '<br/>')
 		element.innerHTML = '<code>' + plain + '</code>'
-		result.style.zIndex = 10
 		result.style.display = 'block'
 	}
 
@@ -530,7 +526,6 @@ int main(void) {
 		plain = plain.replaceAll(' ', '&nbsp;')
 		plain = plain.replace(/\n/g, '<br/>')
 		element.innerHTML = '<code>' + plain + '</code>'
-		result.style.zIndex = 10
 		result.style.display = 'block'
 	}
 
@@ -553,7 +548,6 @@ int main(void) {
 		plain = plain.replaceAll(' ', '&nbsp;')
 		plain = plain.replace(/\n/g, '<br/>')
 		element.innerHTML = '<code>' + plain + '</code>'
-		result.style.zIndex = 10
 		result.style.display = 'block'
 	}
 
@@ -579,13 +573,11 @@ int main(void) {
 		detail.innerHTML = html
 		var main   = document.querySelector('#process-result')
 		main.style.display = 'block'
-		main.style.zIndex = 10
 	}
 
 	async function closeProcess() {
 		var main   = document.querySelector('#process-result')
 		main.style.display = 'none'
-		main.style.zIndex = -10
 	}
 
 	async function killJob(pid) {
