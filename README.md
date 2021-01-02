@@ -20,6 +20,8 @@ Build Project ที่ต้องการได้ทันที
 ลองไป Clone และสร้าง Pull Request กันได้ที่นี่ 
 https://github.com/kookiatsuetrong/minimal
 
+![](minimal.png)
+
 The project “minimal” is an integrated development environment 
 that follows software engineering process. It supports all type 
 of software, starting from software specification. 
