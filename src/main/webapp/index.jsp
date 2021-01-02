@@ -112,7 +112,7 @@ int main(void) {
 		:root {
 			--editor: white;
 			--editor-text: #333;
-			--editor-line: #bbb;
+			--editor-line: #eee;
 		}
 
 		body {
@@ -147,6 +147,7 @@ int main(void) {
 
 		.btn {
 			border-radius: .4rem;
+			border: 2px solid var(--editor-line);
 		}
 
 		textarea {
@@ -160,7 +161,7 @@ int main(void) {
 		.form-control {
 			background: var(--editor);
 			color: var(--editor-text);
-			border-color: var(--editor-line);
+			border: 2px solid var(--editor-line);
 		}
 
 		.form-control:focus {
@@ -185,7 +186,7 @@ int main(void) {
 			opacity: .95;
 			color: var(--editor-text);
 			background: var(--editor);
-			border: 1px solid var(--editor-line);
+			border: 2px solid var(--editor-line);
 		}
 
 		#dialog-detail a {
@@ -259,7 +260,7 @@ int main(void) {
 		story {
 			display: block;
 			background: var(--editor);
-			border: 1px solid var(--editor-line);
+			border: 2px solid var(--editor-line);
 			margin-bottom: 1rem;
 			padding: .5rem 1rem;
 			border-radius: 1rem;
@@ -318,7 +319,6 @@ int main(void) {
 	var date = new Date()
 	if (date.getHours() >= 18 || date.getHours() < 6) {
 		switchTheme()
-		console.log('switched')
 	}
 
 	document.getElementById("command").onkeydown = function(e) {
@@ -345,13 +345,13 @@ int main(void) {
 		current = current.trim()
 		if (current == 'white') {
 			root.style.setProperty('--editor',      'black')
-			root.style.setProperty('--editor-text', '#eee')
-			root.style.setProperty('--editor-line', '#666')
+			root.style.setProperty('--editor-text', '#ddd')
+			root.style.setProperty('--editor-line', '#555')
 		}
 		if (current == 'black') {
 			root.style.setProperty('--editor',      'white')
 			root.style.setProperty('--editor-text', '#333')
-			root.style.setProperty('--editor-line', '#bbb')
+			root.style.setProperty('--editor-line', '#eee')
 		}
 	}
 	
