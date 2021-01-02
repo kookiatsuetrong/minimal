@@ -59,8 +59,9 @@ public class Main extends HttpServlet {
 			response.setCharacterEncoding("UTF-8");
 			Context context = new Context(request, response);
 			String uri = request.getRequestURI();
+			String srv = request.getServletPath();
+			uri = uri.substring(srv.length());
 			switch (uri) {
-				default              -> showError(context);
 				case "/"             -> showIndex(context);
 				case "/run-c"        -> runC(context);
 				case "/run-java"     -> runJava(context);
@@ -71,6 +72,7 @@ public class Main extends HttpServlet {
 				case "/read-file"    -> readFile(context);
 				case "/write-file"   -> writeFile(context);
 				case "/execute"      -> execute(context);
+				default              -> showError(context);
 			}
 		} catch (Exception e) { }
 	}
@@ -224,14 +226,16 @@ public class Main extends HttpServlet {
 	void
 	showIndex(Context context) {
 		context.response.setContentType("text/plain");
-		context.print("The First Page");
+		context.print("The Root Service");
 	}
 	
 	void
 	showError(Context context) {
 		String uri = context.request.getRequestURI();
-		String start = context.request.getServletContext().getRealPath("./");
+		context.println("Not Found");
 		
+		/*
+		String start = context.request.getServletContext().getRealPath("./");
 		try {
 			File file = new File(start + uri);
 			if (file.isFile()) {
@@ -253,17 +257,12 @@ public class Main extends HttpServlet {
 					}
 					context.print((char)k);
 				}
-				/*
-				Scanner in = new Scanner(file);
-				while (in.hasNextLine()) {
-					builder.append( in.nextLine() );
-					builder.append( "\n" );
-				}
-				*/
+				in.close();
 			} else {
 				context.println("Not Found");
 			}
 		} catch (Exception e) { }
+		*/
 	}
 	
 	void

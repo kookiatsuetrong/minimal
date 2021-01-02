@@ -7,7 +7,7 @@
 					maximum-scale=1,
 					viewport-fit=cover" />
 		<link rel="stylesheet" href="/bootstrap.css" />
-		<link rel="shortcut icon" href="/icon.png" />
+		<link rel="icon" href="/icon.png" type="image/png" />
 		<title>minimal</title>
 	</head>
 	<body>
@@ -361,7 +361,7 @@ int main(void) {
 	}
 
 	async function showFolder() {
-		var response = await fetch('/list-folder')
+		var response = await fetch('/service/list-folder')
 		var plain    = await response.text()
 		var data = [ ]
 		plain = plain.split('\n')
@@ -396,7 +396,7 @@ int main(void) {
 	}
 
 	async function openFile(file) {
-		var response = await fetch('/read-file?name=' + file)
+		var response = await fetch('/service/read-file?name=' + file)
 		var plain    = await response.text()
 		document.getElementById('editor').value = plain
 		
@@ -423,7 +423,7 @@ int main(void) {
 								'&text=' + 
 								encodeURIComponent(editor.value)
 						}
-		var response = await fetch('/write-file', detail)
+		var response = await fetch('/service/write-file', detail)
 		var plain = await response.text()
 		console.log(plain)
 	}
@@ -441,7 +441,7 @@ int main(void) {
 		var detail = {  method: 'POST',
 						headers: h,
 						body:  'command=' + command }
-		var response = await fetch('/execute', detail)
+		var response = await fetch('/service/execute', detail)
 		var plain    = await response.text()
 		
 		plain = plain.replace(/âââ /g, "'-- ")
@@ -464,7 +464,7 @@ int main(void) {
 						headers: h,
 						body:  'text=' + encodeURIComponent(editor.value)
 						}
-		var response = await fetch('/run-java', detail)
+		var response = await fetch('/service/run-java', detail)
 		var plain = await response.text()
 		plain = plain.replaceAll(' ', '&nbsp;')
 		plain = plain.replace(/\n/g, '<br/>')
@@ -483,7 +483,7 @@ int main(void) {
 						headers: h,
 						body:  'text=' + encodeURIComponent(editor.value)
 						}
-		var response = await fetch('/run-c', detail)
+		var response = await fetch('/service/run-c', detail)
 		var plain = await response.text()
 		plain = plain.replaceAll(' ', '&nbsp;')
 		plain = plain.replace(/\n/g, '<br/>')
@@ -521,7 +521,7 @@ int main(void) {
 	}
 
 	async function listJob() {
-		var response = await fetch("/list-job")
+		var response = await fetch("/service/list-job")
 		var data     = await response.text()
 		var results  = data.split("\n")
 		var html     = ''
@@ -546,14 +546,14 @@ int main(void) {
 	}
 
 	async function killJob(pid) {
-		var response = await fetch("/kill?pid=" + pid)
+		var response = await fetch("/service/kill?pid=" + pid)
 		var data     = await response.text()
 		console.log(data)
 		listJob()
 	}
 
 	async function listProject() {
-		var response = await fetch("/list-project")
+		var response = await fetch("/service/list-project")
 		var data     = await response.text()
 		var result   = data.trim().split("\n")
 		var menu     = ''
@@ -573,7 +573,7 @@ int main(void) {
 	}
 
 	async function showSpecification(project) {
-		var response = await fetch("/read-file?name=" +
+		var response = await fetch("/service/read-file?name=" +
 								"./" + project + "/minimal/" +
 								"specification.html")
 		var data = await response.text()
