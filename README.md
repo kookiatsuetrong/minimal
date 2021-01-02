@@ -62,7 +62,9 @@ export PATH=/var/sapmachine-jdk-15.0.1/bin:$PATH
 
 Download Tomcat latest version, and start it up
 ```
-wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.41/bin/apache-tomcat-9.0.41.zip
+wget https://downloads.apache.org/tomcat\
+/tomcat-9/v9.0.41/bin/apache-tomcat-9.0.41.zip
+
 unzip apache-tomcat-9.0.41.zip
 mv apache-tomcat-9.0.41 tomcat
 chmod +x tomcat/bin/*.sh
