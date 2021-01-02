@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -110,9 +111,7 @@ public class Main extends HttpServlet {
 		StringBuilder result = new StringBuilder();
 		try {
 			Process process = Runtime.getRuntime().exec(command);
-			
 			jobs.add(process);
-			// TODO: Add original command line here
 			
 			int k;
 			InputStream error = process.getErrorStream();
@@ -246,13 +245,21 @@ public class Main extends HttpServlet {
 					type = "text/plain";
 				}
 				context.response.setContentType(type);
+				FileInputStream in = new FileInputStream(file);
+				while (true) {
+					int k = in.read();
+					if (k < 0) {
+						break;
+					}
+					context.print((char)k);
+				}
+				/*
 				Scanner in = new Scanner(file);
-				StringBuilder builder = new StringBuilder();
 				while (in.hasNextLine()) {
 					builder.append( in.nextLine() );
 					builder.append( "\n" );
 				}
-				context.println(builder.toString());
+				*/
 			} else {
 				context.println("Not Found");
 			}

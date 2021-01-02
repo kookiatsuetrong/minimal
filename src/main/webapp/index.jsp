@@ -7,6 +7,7 @@
 					maximum-scale=1,
 					viewport-fit=cover" />
 		<link rel="stylesheet" href="/bootstrap.css" />
+		<link rel="shortcut icon" href="/icon.png" />
 		<title>minimal</title>
 	</head>
 	<body>
