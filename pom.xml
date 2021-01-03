@@ -28,6 +28,11 @@
 			<version>LATEST</version>
 		</dependency>
 		-->
+		<dependency>
+			<groupId>freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<build>

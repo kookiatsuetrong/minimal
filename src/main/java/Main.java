@@ -1,9 +1,9 @@
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
@@ -72,9 +72,21 @@ public class Main extends HttpServlet {
 				case "/read-file"    -> readFile(context);
 				case "/write-file"   -> writeFile(context);
 				case "/execute"      -> execute(context);
+				case "/test"         -> showTest(context);
 				default              -> showError(context);
 			}
 		} catch (Exception e) { }
+	}
+	
+	View view = new View();
+	
+	void
+	showTest(Context context) {
+		context.response.setContentType("text/html");
+		Map<String,String> model = new HashMap<>();
+		model.put("user", "James Bond");
+		String html = view.render("welcome.html", model);
+		context.print(html);
 	}
 	
 	void

@@ -13,4 +13,3 @@ class Killer extends Thread {
 		} catch (Exception e) { }
 	}
 }
-
