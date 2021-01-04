@@ -432,6 +432,8 @@ int main(void) {
 		currentEditorFile = ''
 		var editor = document.querySelector('#editor')
 		editor.value = ''
+		var command = document.getElementById('command')
+		command.placeholder = ''
 	}
 
 	async function execute(command) {
@@ -589,6 +591,26 @@ int main(void) {
 		var view = document.querySelector('#web-view')
 		view.style.display = 'none'
 	}
+	
+	async function test() {
+		var response = await fetch("/service/read-file?name=" +
+								"./minimal-demo/minimal/" +
+								"specification.html")
+		var data = await response.text()
+		var parser = new DOMParser()
+		var root = parser.parseFromString(data, "application/xml")
+		
+		for (var current = root.firstChild.firstChild;
+				current != null;
+				current  = current.nextSibling)
+		{
+			console.log(current)
+		}
+		
+		// console.log(root.firstChild)
+	}
+	
+	test()
 	</script>
 
 </html>
